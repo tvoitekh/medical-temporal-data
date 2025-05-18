@@ -3,6 +3,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 import xgboost as xgb
 from sklearn.model_selection import RandomizedSearchCV
@@ -153,7 +154,13 @@ if __name__ == "__main__":
     }
     
     xgb_random_search = RandomizedSearchCV(
-        xgb.XGBClassifier(random_state=42, use_label_encoder=False, eval_metric='logloss'),
+        xgb.XGBClassifier(
+            random_state=42,
+            use_label_encoder=False, # This is deprecated, consider objective below
+            eval_metric='logloss',
+            tree_method='hist',
+            device='cuda:1'
+        ),
         param_distributions=xgb_param_dist,
         n_iter=25,
         cv=5,
